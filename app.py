@@ -11,7 +11,6 @@ except FileNotFoundError:
     st.error("Updated model files not found. Please upload the new .pkl files.")
 
 st.title("Diabetes Prediction System")
-st.write("Real-time Risk Assessment using 5 Key Health Indicators")
 
 # --- USER INPUT (Simplified) ---
 glucose = st.number_input("Glucose Level", value=120)
@@ -35,5 +34,6 @@ if st.button("Predict Diabetes Risk"):
         st.error("High Risk: Potential likelihood of diabetes detected.")
     else:
         st.success("Low Risk: No immediate indicators of diabetes found.")
+
 
 
