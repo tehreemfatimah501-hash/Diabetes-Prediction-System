@@ -89,9 +89,3 @@ The final application is deployed live using **Streamlit**.
 
 
 **Visualization**: Interactive charts (ROC curves, Correlation Heatmaps) implemented with Plotly and Matplotlib.
-
-**Date:** December 26, 2023 
-
----
-
-Would you like me to generate a `LICENSE` file or a `requirements.txt` file for your repository as well?
