@@ -9,19 +9,19 @@ Developed as part of the **Artificial Intelligence & Machine Learning** course a
 
 ## Key Objectives
 
-* 
+
 **Accurate Risk Prediction**: Identifying diabetes risk through structured patient health records.
 
 
-* 
+ 
 **Comparative Analysis**: Evaluating multiple algorithms including Logistic Regression, Random Forest, and XGBoost.
 
 
-* 
+  
 **Interactive Analytics**: Visualizing data distributions and model performance through dynamic dashboards.
 
 
-* 
+  
 **Web Deployment**: Providing a real-time user interface via Streamlit.
 
 
@@ -41,34 +41,31 @@ The system utilizes the **PIMA Indians Diabetes Dataset**. The primary features 
 
 1. Data Preprocessing 
 
-* 
 **Ingestion**: Local dataset ingestion using the Pandas library.
 
 
-* 
+
 **Cleaning**: Handling missing values via mean/median imputation and removing outliers.
 
 
-* 
+
 **Scaling**: Normalizing feature ranges using StandardScaler or MinMaxScaler.
 
 
-* 
+
 **Splitting**:  train-test split for robust evaluation.
 
 
 
 2. Machine Learning Models 
 
-* 
 **Logistic Regression**: A baseline model for high interpretability.
 
 
-* 
+
 **Random Forest**: An ensemble method to handle non-linear patterns and reduce overfitting.
 
 
-* 
 **XGBoost**: Advanced boosting for high predictive performance.
 
 
@@ -84,28 +81,14 @@ Models are assessed based on:
 
 
 
-## 🌐 Deployment
+## Deployment
 
 The final application is deployed live using **Streamlit**.
 
-* 
 **Saved Models**: Trained models are serialized as `.pkl` files for instant inference.
 
 
-* 
 **Visualization**: Interactive charts (ROC curves, Correlation Heatmaps) implemented with Plotly and Matplotlib.
-
-
-
-## Ethical Disclaimer
-
-This system is intended for **educational purposes only** and does not replace professional medical diagnosis or advice. It should not be used as the sole basis for healthcare decisions.
-
----
-
-**Author:** Tehreem Fatima 
-
-**Instructor:** Mr. Zeeshan Aslam 
 
 **Date:** December 26, 2023 
 
