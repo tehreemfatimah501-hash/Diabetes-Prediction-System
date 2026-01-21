@@ -1,46 +1,58 @@
-import streamlit as st # [cite: 24]
-import pandas as pd # [cite: 40]
+import streamlit as st [cite: 24]
+import pandas as pd [cite: 40]
 import numpy as np
-import pickle # [cite: 142]
+import pickle [cite: 142]
 
-# --- LOAD ASSETS ---
-# Ensure these files are in your GitHub repository root [cite: 148, 154]
+# --- LOAD MODELS ---
 try:
-    model = pickle.load(open('diabetes_model.pkl', 'rb')) # [cite: 142]
-    scaler = pickle.load(open('scaler.pkl', 'rb'))
-except Exception as e:
-    st.error("Model files not found. Please upload .pkl files.")
+    model = pickle.load(open('diabetes_model.pkl', 'rb')) [cite: 142]
+    scaler = pickle.load(open('scaler.pkl', 'rb')) [cite: 142]
+except FileNotFoundError:
+    st.error("Model files (.pkl) not found. Please upload them to your repository.") [cite: 148]
 
-# --- UI SETUP ---
-st.title("Diabetes Prediction System") # [cite: 1]
-st.write("Machine Learning Based Risk Assessment") # [cite: 2]
+st.title("Diabetes Prediction System") [cite: 1]
+st.write("Real-time Web Application for Risk Assessment") [cite: 23, 24]
 
 # --- USER INPUT ---
-# Using sliders to collect medical parameters [cite: 111]
-glucose = st.number_input("Glucose Level", value=120) # [cite: 34]
-bp = st.number_input("Blood Pressure", value=70) # [cite: 35]
-bmi = st.number_input("BMI", value=25.0) # [cite: 36]
-insulin = st.number_input("Insulin Level", value=80) # [cite: 36]
-age = st.number_input("Age", value=33) # [cite: 37]
+# NOTE: Ensure you include EVERY feature used during model training.
+# If your PIMA dataset used 8 features, you must collect all 8 here.
+with st.form("prediction_form"):
+    col1, col2 = st.columns(2)
+    with col1:
+        preg = st.number_input("Pregnancies", value=0)
+        glucose = st.number_input("Glucose Level", value=120) [cite: 34]
+        bp = st.number_input("Blood Pressure", value=70) [cite: 35]
+        skinthickness = st.number_input("Skin Thickness", value=20)
+    with col2:
+        insulin = st.number_input("Insulin Level", value=80) [cite: 36]
+        bmi = st.number_input("BMI", value=25.0) [cite: 36]
+        dpf = st.number_input("Diabetes Pedigree Function", value=0.5)
+        age = st.number_input("Age", value=33) [cite: 37]
+    
+    submit = st.form_submit_state = st.form_submit_button("Predict Risk")
 
 # --- PREDICTION LOGIC ---
-# This section must be indented correctly to avoid SyntaxError 
-if st.button("Predict Diabetes Risk"): # 
-    # 1. Arrange inputs into a 2D array [cite: 41]
-    features = np.array([[glucose, bp, bmi, insulin, age]]) 
+if submit:
+    # 1. Create the feature list in the EXACT order of your training CSV [cite: 31, 33]
+    # Example order for PIMA: Preg, Gluc, BP, Skin, Ins, BMI, DPF, Age
+    features = np.array([[preg, glucose, bp, skinthickness, insulin, bmi, dpf, age]])
     
-    # 2. Scale features using your saved scaler [cite: 63]
-    features_scaled = scaler.transform(features)
-    
-    # 3. Generate prediction [cite: 10]
-    prediction = model.predict(features_scaled) # [cite: 113]
-    
-    # 4. Display results [cite: 115]
-    st.subheader("Results:")
-    if prediction[0] == 1:
-        st.error("High Risk: The system predicts a likelihood of diabetes.") # [cite: 38]
-    else:
-        st.success("Low Risk: The system predicts no diabetes.") # [cite: 38]
+    try:
+        # 2. Scale the features [cite: 55, 62]
+        features_scaled = scaler.transform(features) [cite: 63]
+        
+        # 3. Predict [cite: 18, 115]
+        prediction = model.predict(features_scaled) [cite: 73, 77, 79]
+        probability = model.predict_proba(features_scaled) [cite: 115]
+        
+        # 4. Display Results [cite: 22, 110]
+        st.subheader("Diagnostic Results")
+        if prediction[0] == 1: [cite: 38]
+            st.error(f"Prediction: Diabetes Likely (Confidence: {np.max(probability):.2%})") [cite: 39, 115]
+        else:
+            st.success(f"Prediction: No Diabetes Detected (Confidence: {np.max(probability):.2%})") [cite: 39, 115]
+            
+    except ValueError as e:
+        st.error(f"Feature Mismatch: Your model expects a different number of inputs. {e}")
 
-# --- DISCLAIMER ---
-st.info("Ethical Disclaimer: Educational purposes only. Not for medical diagnosis.") # [cite: 156]
+st.info("Ethical Disclaimer: This system is for educational purposes only.") [cite: 155, 156]
