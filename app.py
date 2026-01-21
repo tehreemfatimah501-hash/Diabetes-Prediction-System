@@ -1,80 +1,46 @@
-import streamlit as st  # Fixes the NameError 
-import pandas as pd
+import streamlit as st # [cite: 24]
+import pandas as pd # [cite: 40]
 import numpy as np
-import pickle
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pickle # [cite: 142]
 
-# --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Diabetes Prediction System", layout="wide") [cite: 1]
-
-# --- LOAD TRAINED MODELS ---
-# These files must be in your GitHub repository [cite: 142, 148]
+# --- LOAD ASSETS ---
+# Ensure these files are in your GitHub repository root [cite: 148, 154]
 try:
-    model = pickle.load(open('diabetes_model.pkl', 'rb')) [cite: 142]
-    scaler = pickle.load(open('scaler.pkl', 'rb')) [cite: 63]
-except FileNotFoundError:
-    st.error("Error: Trained model (.pkl) or Scaler not found. Please upload them to GitHub.") [cite: 148]
+    model = pickle.load(open('diabetes_model.pkl', 'rb')) # [cite: 142]
+    scaler = pickle.load(open('scaler.pkl', 'rb'))
+except Exception as e:
+    st.error("Model files not found. Please upload .pkl files.")
 
-# --- SIDEBAR: USER INPUT --- [cite: 111]
-st.sidebar.header("Patient Medical Parameters") [cite: 10]
-def get_user_input():
-    # Indicators based on your project requirements [cite: 33, 34, 35, 36, 37]
-    glucose = st.sidebar.slider('Glucose Level', 0, 200, 120) [cite: 34]
-    bp = st.sidebar.slider('Blood Pressure', 0, 130, 70) [cite: 35]
-    bmi = st.sidebar.slider('BMI', 0.0, 70.0, 25.0) [cite: 36]
-    insulin = st.sidebar.slider('Insulin Level', 0, 850, 80) [cite: 36]
-    age = st.sidebar.slider('Age', 1, 120, 33) [cite: 37]
-    
-    # Create a feature array (Order must match your training data)
-    features = pd.DataFrame({
-        'Glucose': [glucose],
-        'BloodPressure': [bp],
-        'BMI': [bmi],
-        'Insulin': [insulin],
-        'Age': [age]
-    })
-    return features
+# --- UI SETUP ---
+st.title("Diabetes Prediction System") # [cite: 1]
+st.write("Machine Learning Based Risk Assessment") # [cite: 2]
 
-input_data = get_user_input()
-
-# --- MAIN INTERFACE ---
-st.title("Diabetes Prediction System") [cite: 1]
-st.write("Machine Learning Based Risk Assessment & Predictive Analytics") [cite: 2]
-st.write("Enter patient data for a real-time risk assessment.") [cite: 10, 24]
+# --- USER INPUT ---
+# Using sliders to collect medical parameters [cite: 111]
+glucose = st.number_input("Glucose Level", value=120) # [cite: 34]
+bp = st.number_input("Blood Pressure", value=70) # [cite: 35]
+bmi = st.number_input("BMI", value=25.0) # [cite: 36]
+insulin = st.number_input("Insulin Level", value=80) # [cite: 36]
+age = st.number_input("Age", value=33) # [cite: 37]
 
 # --- PREDICTION LOGIC ---
-if st.button("Predict Diabetes Risk"): [cite: 18]
-    # Apply feature scaling as defined in your preprocessing phase [cite: 55, 62]
-    scaled_data = scaler.transform(input_data) [cite: 63]
+# This section must be indented correctly to avoid SyntaxError 
+if st.button("Predict Diabetes Risk"): # 
+    # 1. Arrange inputs into a 2D array [cite: 41]
+    features = np.array([[glucose, bp, bmi, insulin, age]]) 
     
-    # Generate prediction (0 or 1) [cite: 38]
-    prediction = model.predict(scaled_data) [cite: 115]
-    probability = model.predict_proba(scaled_data) [cite: 115]
+    # 2. Scale features using your saved scaler [cite: 63]
+    features_scaled = scaler.transform(features)
     
-    st.subheader("Analysis Results")
+    # 3. Generate prediction [cite: 10]
+    prediction = model.predict(features_scaled) # [cite: 113]
+    
+    # 4. Display results [cite: 115]
+    st.subheader("Results:")
     if prediction[0] == 1:
-        st.error(f"Prediction: Diabetes Detected (High Risk)") [cite: 38]
+        st.error("High Risk: The system predicts a likelihood of diabetes.") # [cite: 38]
     else:
-        st.success(f"Prediction: No Diabetes (Low Risk)") [cite: 38]
-    
-    st.write(f"**Model Confidence:** {np.max(probability)*100:.2f}%") [cite: 115]
+        st.success("Low Risk: The system predicts no diabetes.") # [cite: 38]
 
-# --- INTERACTIVE ANALYTICS --- [cite: 21, 117]
-st.divider()
-st.subheader("Interactive Data Visualization") [cite: 117]
-
-# Load dataset for visualization tools [cite: 30, 40]
-try:
-    df = pd.read_csv('diabetes.csv') [cite: 31, 40]
-    
-    # Correlation Heatmap [cite: 122]
-    fig, ax = plt.subplots()
-    sns.heatmap(df.corr(), annot=True, cmap='RdYlGn', ax=ax) [cite: 123, 126]
-    st.pyplot(fig) [cite: 136]
-    
-except FileNotFoundError:
-    st.info("Upload 'diabetes.csv' to view interactive correlation maps.") [cite: 136]
-
-# --- ETHICAL DISCLAIMER --- [cite: 155]
-st.warning("Educational purposes only. This does not replace professional medical diagnosis.") [cite: 156, 157]
+# --- DISCLAIMER ---
+st.info("Ethical Disclaimer: Educational purposes only. Not for medical diagnosis.") # [cite: 156]
