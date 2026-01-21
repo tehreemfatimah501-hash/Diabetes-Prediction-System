@@ -36,4 +36,4 @@ if st.button("Predict Diabetes Risk"):
     else:
         st.success("Low Risk: No immediate indicators of diabetes found.")
 
-st.info("Disclaimer: Educational purposes only. Not a medical diagnosis.")
+
