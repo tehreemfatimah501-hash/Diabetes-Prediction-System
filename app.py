@@ -1,39 +1,44 @@
+# app.py
 import streamlit as st
-import pandas as pd
 import numpy as np
 import pickle
 
-# --- LOAD UPDATED MODELS ---
+# --- Load Ensemble Model & Scaler ---
 try:
-    model = pickle.load(open('diabetes_model.pkl', 'rb'))
+    model = pickle.load(open('diabetes_ensemble_model.pkl', 'rb'))
     scaler = pickle.load(open('scaler.pkl', 'rb'))
 except FileNotFoundError:
-    st.error("Updated model files not found. Please upload the new .pkl files.")
+    st.error("Model or scaler .pkl files not found!")
 
-st.title("Diabetes Prediction System")
+st.title("Diabetes Prediction System (Ensemble)")
 
-# --- USER INPUT (Simplified) ---
+st.write("""
+Enter your medical details below to predict the likelihood of diabetes.
+""")
+
+# --- User Inputs ---
+pregnancies = st.number_input("Number of Pregnancies", value=0, min_value=0)
 glucose = st.number_input("Glucose Level", value=120)
 bp = st.number_input("Blood Pressure", value=70)
-bmi = st.number_input("BMI", value=25.0)
+skin = st.number_input("Skin Thickness", value=20)
 insulin = st.number_input("Insulin Level", value=80)
+bmi = st.number_input("BMI", value=25.0)
+dpf = st.number_input("Diabetes Pedigree Function", value=0.5)
 age = st.number_input("Age", value=33)
 
-# --- PREDICTION LOGIC ---
+# --- Prediction ---
 if st.button("Predict Diabetes Risk"):
-    # Create array with exactly 5 features in the correct order
-    features = np.array([[glucose, bp, bmi, insulin, age]])
+    # Arrange features in correct order
+    features = np.array([[pregnancies, glucose, bp, skin, insulin, bmi, dpf, age]])
     
-    # Transform using the updated scaler
+    # Scale features
     features_scaled = scaler.transform(features)
     
     # Predict
     prediction = model.predict(features_scaled)
-    
+    proba = model.predict_proba(features_scaled)[0][1]  # probability of diabetes
+
     if prediction[0] == 1:
-        st.error("High Risk: Potential likelihood of diabetes detected.")
+        st.error(f"High Risk: Potential likelihood of diabetes detected (Probability: {proba:.2f})")
     else:
-        st.success("Low Risk: No immediate indicators of diabetes found.")
-
-
-
+        st.success(f"Low Risk: No immediate indicators of diabetes found (Probability: {proba:.2f})")
