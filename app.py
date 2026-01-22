@@ -10,11 +10,7 @@ try:
 except FileNotFoundError:
     st.error("Model or scaler .pkl files not found!")
 
-st.title("Diabetes Prediction System (Ensemble)")
-
-st.write("""
-Enter your medical details below to predict the likelihood of diabetes.
-""")
+st.title("Diabetes Prediction System")
 
 # --- User Inputs ---
 pregnancies = st.number_input("Number of Pregnancies", value=0, min_value=0)
@@ -42,3 +38,4 @@ if st.button("Predict Diabetes Risk"):
         st.error(f"High Risk: Potential likelihood of diabetes detected (Probability: {proba:.2f})")
     else:
         st.success(f"Low Risk: No immediate indicators of diabetes found (Probability: {proba:.2f})")
+
